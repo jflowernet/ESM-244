@@ -3,6 +3,7 @@ title: "Lab 1"
 author: "Jason Flower"
 date: "January 18, 2018"
 output: html_document
+self_contained: no
 ---
 
 ```{r setup, include=FALSE}
@@ -40,6 +41,15 @@ hp_df1 <- hp_aggression %>%
   ungroup() %>%
   select(Name, average_rate) %>%
   distinct(Name, average_rate) %>%
+  arrange(-average_rate) %>% #low to high rather than high to low
+  head(10)
+
+#alternative code
+hp_df2 <- hp_aggression %>% 
+  select(Name, aggressions, mentions) %>% 
+  group_by(Name) %>%
+  summarise(average_rate = mean(aggressions/mentions)) %>%
+  ungroup() %>%
   arrange(-average_rate) %>% #low to high rather than high to low
   head(10)
 
