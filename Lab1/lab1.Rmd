@@ -1,0 +1,66 @@
+---
+title: "Lab 1"
+author: "Jason Flower"
+date: "January 18, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Step 1 Load tidyverse
+
+
+```{r load_packages}
+library(tidyverse)
+```
+
+#Step 2 Get the data
+
+```{r get_data}
+hp_aggression <- read_csv("hp_aggression.csv")
+```
+
+
+#Step 3. Data wrangling
+
+-select(): select specified columns from a df
+-filter(): select rows by setting conditions to match
+-mutate(): adds columns based on caclultions for existing
+-arrange(: sorting variables
+-group_by(): assign groupings to variable entries and can perform operations by group
+
+```{r data_wrangling}
+hp_df1 <- hp_aggression %>% 
+  select(Name, aggressions, mentions) %>% 
+  mutate(rate = aggressions/mentions) %>%
+  group_by(Name) %>%
+  mutate(average_rate = mean(rate)) %>%
+  ungroup() %>%
+  select(Name, average_rate) %>%
+  distinct(Name, average_rate) %>%
+  arrange(-average_rate) %>% #low to high rather than high to low
+  head(10)
+
+```
+
+##Step 4 ggplot refresher
+
+1. Tell R that you want to use ggplot
+2. Tell it what data you want to use (including what x and y are)
+3. Tell it what type of graphic you want to create
+
+```{r st_levels}
+
+hp_df1$Name <- factor(hp_df1$Name, levels = hp_df1$Name[order(hp_df1$average_rate)])
+```
+
+Make the graph!
+
+```{r hp_graph}
+ggplot(data = hp_df1, aes(x = Name, y = average_rate)) +
+  geom_bar(stat = "identity", aes(fill = Name)) +
+  coord_flip()
+```
+
